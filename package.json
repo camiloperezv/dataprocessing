@@ -1,0 +1,23 @@
+{
+  "name": "data_processing",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "fs": "0.0.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/camiloperezv/dataprocessing.git"
+  },
+  "author": "camilo perez",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/camiloperezv/dataprocessing/issues"
+  },
+  "homepage": "https://github.com/camiloperezv/dataprocessing#readme"
+}
