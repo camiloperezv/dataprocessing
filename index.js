@@ -3,7 +3,7 @@ var header = ['age','job_admin.','job_blue-collar','job_entrepreneur','job_house
 var variables = ['age','admin.','blue-collar','entrepreneur','housemaid','management','retired','self-employed','services','student','technician','unemployed','unknown','divorced','married','single','unknown', 'basic.4y','basic.6y','basic.9y','high.school','illiterate','professional.course','university.degree','unknown','default','housing','loan','cellular','telephone','month','day_of_week','duration','campaign','pdays','previous', 'failure','nonexistent','success','y']
 var finalObj = [[]];
 //fs.readFile('./data/bank/bank-full.csv','utf8',function done(err,data){
-fs.readFile('./data/bank-additional/bank-additional/bank-additional-full.csv','utf8',function done(err,data){
+fs.readFile('./data/bank-additional/bank-additional-full.csv','utf8',function done(err,data){
 	var matrix = data.split('\n');
 	var formatedData = matrix.map(
 		function splitArr(arr){
@@ -20,10 +20,42 @@ fs.readFile('./data/bank-additional/bank-additional/bank-additional-full.csv','u
 			return finalLine;
 		}
 	);
-	processData(formatedData);
+	var medsArray = fillSpaces(formatedData);
+	console.log('the meds is',medsArray);
+	//processData(formatedData);
 });
+
+var fillSpaces = function(formatedData){
+	var i, j, meds = [], medsFinal = [];
+	for(i in formatedData){
+		for(j in formatedData[i]){
+			if(!meds[j]){
+				meds[j] = {};
+			}
+			if(!meds[j][formatedData[i][j]]){
+				 meds[j][formatedData[i][j]] = 1;
+			}else{
+				meds[j][formatedData[i][j]]++;
+			}
+		}
+	}
+	for(i in meds){
+		for(j in meds[i]){
+			if(!j){
+				continue;
+			}
+			if(!medsFinal[i]){
+				medsFinal[i] = j;
+			}else if(meds[i][medsFinal[i]]<=meds[i][j]){
+					medsFinal[i] = j;
+			}
+		}
+	}
+	console.log('the meds is',meds);
+	return medsFinal;
+};
 var processData = function (formatedData){
-	var i, line;
+	var i;
 	console.log('formatedData',formatedData[1])
 	for(i in formatedData){
 		if(i == 0){
