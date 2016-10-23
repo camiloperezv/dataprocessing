@@ -1,25 +1,5 @@
 var fs = require('fs');
 var pd = require('./proccessData')();
-
-
-//funcion para conocer los posibles valores que tiene la base de datos.
-/*["age",
-"job",
-"marital",
-"education",
-"default",
-"balance",
-"housing",
-"loan",
-"contact",
-"day",
-"month",
-"duration",
-"campaign",
-"pdays",
-"previous",
-"poutcome",
-"y"]*/
 var variables = [
     "age",//0 age 0
     "management","technician","entrepreneur","blue-collar","unknown","retired","admin.","services","self-employed","unemployed","housemaid","student",//1 job 1 - 12
