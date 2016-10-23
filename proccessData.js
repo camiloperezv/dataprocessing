@@ -85,10 +85,7 @@ function posibilities (formatedData){
                 pos[j] = formatedData[0][5];
                 continue;
             }
-            else if(j == 8){
-                pos[j] = formatedData[0][8];
-                continue;
-            }
+            
             else if(j == 11){
                 pos[j] = formatedData[0][11];
                 continue;
