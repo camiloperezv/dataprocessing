@@ -1,4 +1,5 @@
 var fs = require('fs');
+var pd = require('./proccessData')();
 var header = [
 	'age',
 	'job_admin.','job_blue-collar','job_entrepreneur','job_housemaid','job_management','job_retired','job_self-employed','job_services','job_student','job_technician','job_unemployed','job_unknown',
@@ -45,7 +46,6 @@ var variables = [
 	'nr.employed', // nr.employed 49
 	'y'//Output variable 50
 ]
-var finalObj = [header];
 //fs.readFile('./data/bank/bank-full.csv','utf8',function done(err,data){
 fs.readFile('./data/bank-additional/bank-additional-full.csv','utf8',function done(err,data){
 	var matrix = data.split('\n');
@@ -64,39 +64,45 @@ fs.readFile('./data/bank-additional/bank-additional-full.csv','utf8',function do
 			return finalLine;
 		}
 	);
-	//var medsArray = fillSpaces(formatedData);
+	//var medsArray = pd.fillSpaces(formatedData);
 	//console.log('the meds is',medsArray);
-	processData(formatedData);
+	var result = processData(formatedData);
+	result[0] = header;
+	console.log(result[1]);
 });
-
-var processData = function (formatedData){
-	var i;
+//metodo para recorrer el archivo leido y hacer la codificacion a boleanos 
+var processData = function processData (formatedData){
+	var i,finalObj=[];
 	console.log('formatedData 1 ',JSON.stringify(formatedData[0]))
 	console.log('formatedData',JSON.stringify(formatedData[1]))
 	for(i in formatedData){
 		if(i == 0){
 			continue;
 		}
+		//si ton tiene output
+		if(!formatedData[i][20]){
+			continue;
+		}
 		finalObj[i] = [];
 		finalObj[i][0] = formatedData[i][0];
 		//setWork 1 - 12
-		finalObj[i] = setVariable(1,12,formatedData[i][1],finalObj[i])
+		finalObj[i] = pd.setVariable(variables,1,12,formatedData[i][1],finalObj[i])
 		//set Marial 13 - 16
-		finalObj[i] = setVariable(13,16,formatedData[i][2],finalObj[i])
+		finalObj[i] = pd.setVariable(variables,13,16,formatedData[i][2],finalObj[i])
 		//set Education 17 - 24
-		finalObj[i] = setVariable(17,24,formatedData[i][3],finalObj[i])
+		finalObj[i] = pd.setVariable(variables,17,24,formatedData[i][3],finalObj[i])
 		// DEFAULT 25 - 27
-		finalObj[i] = setVariable(25,27,formatedData[i][4],finalObj[i])
+		finalObj[i] = pd.setVariable(variables,25,27,formatedData[i][4],finalObj[i])
 		//HOUSING 28 - 30
-		finalObj[i] = setVariable(28,30,formatedData[i][5],finalObj[i])
+		finalObj[i] = pd.setVariable(variables,28,30,formatedData[i][5],finalObj[i])
 		//LOAN 31 -33
-		finalObj[i] = setVariable(31,33,formatedData[i][6],finalObj[i])
+		finalObj[i] = pd.setVariable(variables,31,33,formatedData[i][6],finalObj[i])
 		//CONTACTO 34 - 35
-		finalObj[i] = setVariable(34,35,formatedData[i][7],finalObj[i])
+		finalObj[i] = pd.setVariable(variables,34,35,formatedData[i][7],finalObj[i])
 		//meses
-		finalObj[i][36] = formatedData[i][8];
+		finalObj[i][36] = pd.getMonth(formatedData[i][8]);
 		//Dia de la semana
-		finalObj[i][37] = formatedData[i][9];
+		finalObj[i][37] = pd.getDay(formatedData[i][9]);
 		//duracion
 		finalObj[i][38] = formatedData[i][10];
 		//capaña
@@ -106,8 +112,7 @@ var processData = function (formatedData){
 		//previous
 		finalObj[i][41] = formatedData[i][13];
 		//poutcome 42 - 44
-		finalObj[i] = setVariable(42,44,formatedData[i][14],finalObj[i])
-		
+		finalObj[i] = pd.setVariable(variables,42,44,formatedData[i][14],finalObj[i])
 		//emp.var.rate
 		finalObj[i][45] = formatedData[i][15];
 		//cons.price.idx
@@ -118,54 +123,12 @@ var processData = function (formatedData){
 		finalObj[i][48] = formatedData[i][18];
 		// nr.employed
 		finalObj[i][49] = formatedData[i][19];
-		//Output 
-		finalObj[i][50] = formatedData[i][20];
+		//Output
+        finalObj[i][50] = '0';
+		if(formatedData[i][20].toLowerCase() == 'yes'){
+			finalObj[i][50] = '1';
+		} 
 	}
-	console.log('the final 0 , 1',JSON.stringify(finalObj[0]),JSON.stringify(finalObj[1]));
+	return finalObj;
 };
 
-
-//Metodo para hacer imputacion de variables obteniendo las medias 
-var fillSpaces = function(formatedData){
-	var i, j, meds = [], medsFinal = [];
-	for(i in formatedData){
-		for(j in formatedData[i]){
-			if(!meds[j]){
-				meds[j] = {};
-			}
-			if(!meds[j][formatedData[i][j]]){
-				 meds[j][formatedData[i][j]] = 1;
-			}else{
-				meds[j][formatedData[i][j]]++;
-			}
-		}
-	}
-	for(i in meds){
-		for(j in meds[i]){
-			if(!j){
-				continue;
-			}
-			if(!medsFinal[i]){
-				medsFinal[i] = j;
-			}else if(meds[i][medsFinal[i]]<=meds[i][j]){
-					medsFinal[i] = j;
-			}
-		}
-	}
-	return medsFinal;
-};
-
-
-var setVariable = function (ini,end,activity,retObj){
-	var i;
-	var newVariables = variables.slice(ini,end+1);
-	var index = newVariables.indexOf(activity);
-	if(index === -1){
-		return retObj
-	}
-	for(i = ini; i <= end; i++){
-		retObj[i] = 0;
-	}
-	retObj[index+ini] = 1;
-	return retObj;
-}
