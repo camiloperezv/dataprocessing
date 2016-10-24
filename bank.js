@@ -41,7 +41,7 @@ fs.readFile('./data/bank/bank-full.csv','utf8',function done(err,data){
 	//var medsArray = fillSpaces(formatedData);
 	//console.log('the meds is',medsArray);
 	var result = processData(formatedData);
-    console.log(result[1]);
+    pd.writeFile(result,'bank.csv');
 });
 var processData = function processData (formatedData){
 	var i,finalObj=[];
@@ -63,7 +63,7 @@ var processData = function processData (formatedData){
 		finalObj[i] = pd.setVariable(variables,16,19,formatedData[i][3],finalObj[i])
         //Defaut 20
 		finalObj[i][20] = '0';
-        if(formatedData[i][4].toLowerCase() == 'yes'){
+        if(formatedData[i][4].toLowerCase().indexOf('yes') != -1){
             finalObj[i][20] = '1';
         }
         //balance 21
@@ -72,12 +72,12 @@ var processData = function processData (formatedData){
         
         //housing 22
 		finalObj[i][22] = '0';
-        if(formatedData[i][6].toLowerCase() == 'yes'){
+        if(formatedData[i][6].toLowerCase().indexOf('yes') != -1){
             finalObj[i][22] = '1';
         }
         //loan 23
 		finalObj[i][23] = '0';
-        if(formatedData[i][7].toLowerCase() == 'yes'){
+        if(formatedData[i][7].toLowerCase().indexOf('yes') != -1){
             finalObj[i][23] = '1';
         }
         //contact 24-26
@@ -98,7 +98,7 @@ var processData = function processData (formatedData){
         finalObj[i] = pd.setVariable(variables,33,35,formatedData[i][15],finalObj[i])      
         //OUTPUT 36
         finalObj[i][36] = '0';
-        if(formatedData[i][16].toLowerCase() == 'yes'){
+        if(formatedData[i][16].toLowerCase().indexOf('yes') != -1){
             finalObj[i][36] = '1';
         }
 	}

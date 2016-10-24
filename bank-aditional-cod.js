@@ -67,8 +67,8 @@ fs.readFile('./data/bank-additional/bank-additional-full.csv','utf8',function do
 	//var medsArray = pd.fillSpaces(formatedData);
 	//console.log('the meds is',medsArray);
 	var result = processData(formatedData);
-	result[0] = header;
-	console.log(result[1]);
+	//result[0] = header;
+	pd.writeFile(result,'bank-aditional.csv');
 });
 //metodo para recorrer el archivo leido y hacer la codificacion a boleanos 
 var processData = function processData (formatedData){
@@ -125,7 +125,7 @@ var processData = function processData (formatedData){
 		finalObj[i][49] = formatedData[i][19];
 		//Output
         finalObj[i][50] = '0';
-		if(formatedData[i][20].toLowerCase() == 'yes'){
+		if(formatedData[i][20].indexOf('yes') != -1){
 			finalObj[i][50] = '1';
 		} 
 	}

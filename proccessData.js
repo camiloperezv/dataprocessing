@@ -1,11 +1,37 @@
+var fs = require('fs');
+
 module.exports = function(){
     return {
         setVariable:setVariable,
         fillSpaces:fillSpaces,
         posibilities:posibilities,
         getMonth:getMonth,
-        getDay:getDay
+        getDay:getDay,
+        writeFile:writeFile
     }
+}
+function writeFile(arr,name){
+    var text = '',i,j;
+    for(i in arr){
+        for(j in arr[i]){
+            if(arr[i][j] !== undefined){
+                if(typeof(arr[i][j]) == 'string'){
+                    text += arr[i][j];
+                }else{
+                    text += arr[i][j].toString();
+                }
+                if(j == arr[i].length-1){
+                    text += '\n';
+                }else{
+                    text += ';';
+                }
+            }
+        }
+    }
+    fs.writeFile(name, text, function (err) {
+        if (err) throw err;
+        console.log('It\'s saved!');
+    });
 }
 //conver month from str to number
 function getMonth(month){
