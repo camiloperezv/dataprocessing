@@ -39,9 +39,32 @@ fs.readFile('./data/bank/bank-full.csv','utf8',function done(err,data){
 	);
     pd.posibilities(formatedData)
 	//var medsArray = fillSpaces(formatedData);
-	//console.log('the meds is',medsArray);
 	var result = processData(formatedData);
-    pd.writeFile(result,'bank.csv');
+
+
+    var positiveResults = pd.getArrayFromPos(result,result[1].length-1,1);
+	var negativeResults = pd.getArrayFromPos(result,result[1].length-1,0);
+	console.log('te positive results are',positiveResults.length)
+	console.log('te negative results are',negativeResults.length)
+	var chunk = 10000-positiveResults.length;
+	var toSend,send=true,i=1;
+    
+	while(send){
+		toSend = negativeResults.splice(0,chunk);
+		pd.writeFile(toSend.concat(positiveResults),'data_proc/bank/portions/bank'+i.toString()+'.csv');
+		i++;
+		if(chunk > negativeResults.length){
+            positiveResults = positiveResults.splice(0,negativeResults.length)
+            console.log('the final positive is',positiveResults.length);
+            console.log('the final negativeResults is',negativeResults.length);
+			pd.writeFile(negativeResults.concat(positiveResults),'data_proc/bank/portions/bank'+i.toString()+'.csv');
+			send = false;
+			break;
+		}
+	}
+    deleted = result.splice(0,1)
+	//result[0] = header;
+	pd.writeFile(result,'data_proc/bank/bank.csv');
 });
 var processData = function processData (formatedData){
 	var i,finalObj=[];

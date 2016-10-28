@@ -49,6 +49,7 @@ var variables = [
 //fs.readFile('./data/bank/bank-full.csv','utf8',function done(err,data){
 fs.readFile('./data/bank-additional/bank-additional-full.csv','utf8',function done(err,data){
 	var matrix = data.split('\n');
+	var i;
 	var formatedData = matrix.map(
 		function splitArr(arr){
 			var line = arr.split(';')
@@ -67,14 +68,30 @@ fs.readFile('./data/bank-additional/bank-additional-full.csv','utf8',function do
 	//var medsArray = pd.fillSpaces(formatedData);
 	//console.log('the meds is',medsArray);
 	var result = processData(formatedData);
+	var positiveResults = pd.getArrayFromPos(result,result[1].length-1,1);
+	var negativeResults = pd.getArrayFromPos(result,result[1].length-1,0);
+	console.log('all results are',result.length);
+	console.log('te positive results are',positiveResults.length)
+	console.log('te negative results are',negativeResults.length)
+	var chunk = 10000-positiveResults.length;
+	var toSend,send=true,i=1;
+	while(send){
+		toSend = negativeResults.splice(0,5360);
+		pd.writeFile(toSend.concat(positiveResults),'data_proc/bank-aditional/portions/bank-aditional'+i.toString()+'.csv');
+		i++;
+		if(5360 > negativeResults.length){
+			pd.writeFile(negativeResults.concat(positiveResults),'data_proc/bank-aditional/portions/bank-aditional'+i.toString()+'.csv');
+			send = false;
+			break;
+		}
+	}
+	deleted = result.splice(0,1)
 	//result[0] = header;
-	pd.writeFile(result,'bank-aditional.csv');
+	pd.writeFile(result,'data_proc/bank-aditional/bank-aditional.csv');
 });
 //metodo para recorrer el archivo leido y hacer la codificacion a boleanos 
 var processData = function processData (formatedData){
 	var i,finalObj=[];
-	console.log('formatedData 1 ',JSON.stringify(formatedData[0]))
-	console.log('formatedData',JSON.stringify(formatedData[1]))
 	for(i in formatedData){
 		if(i == 0){
 			continue;

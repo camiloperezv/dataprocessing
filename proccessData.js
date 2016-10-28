@@ -7,9 +7,25 @@ module.exports = function(){
         posibilities:posibilities,
         getMonth:getMonth,
         getDay:getDay,
-        writeFile:writeFile
+        writeFile:writeFile,
+        getArrayFromPos:getArrayFromPos
     }
 }
+function getArrayFromPos(arr,pos,value){
+    var i,finalObj=[];
+    for(i=1;i<arr.length;i++){
+        try{
+            if(arr[i][pos].toString() == value.toString()){
+                finalObj.push(arr[i]);
+            }
+        }catch(e){
+            console.log('cathc error on',i,arr[i]);
+        }
+        
+    }
+    return finalObj;
+}
+
 function writeFile(arr,name){
     var text = '',i,j;
     for(i in arr){
